@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+:root {
+    --bg-primary: #0e0c1b;
+    --bg-secondary: #100f15;
+    --bg-card: #111418;
+    --border: #3d4f85;
+    --border-active: #2a2f5a;
+    --green: #00ff41;
+    --blue: #003cff;
+    --blue-dim: #0059ff;
+    --green-dim: #00cc33;
+    --green-dark: #004d14;
+    --blue-dark: #00014d;
+    --red: #ff3333;
+    --yellow: #ffcc00;
+    --text-primary: #abadff;
+    --text-secondary: #6a769e;
+    --text-dim: #3f3a5e;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-ui: 'Rajdhani', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at 20% 50%, rgba(0, 255, 65, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 65, 0.02) 0%, transparent 40%);
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--blue-dark); border-radius: 2px; }
+
+/* TIPOGRAFIA */
+h1, h2, h3 { font-family: var(--font-ui); font-weight: 700; color: var(--blue); }
+
+/* BOTONES */
+.btn {
+    font-family: var(--font-mono);
+    padding: 10px 20px;
+    border: 1px solid var(--border-active);
+    background: transparent;
+    color: var(--blue);
+    cursor: pointer;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    background: var(--blue-dark);
+    border-color: var(--blue);
+    box-shadow: 0 0 10px rgba(4, 0, 255, 0.2);
+}
+
+.btn-danger {
+    color: var(--red);
+    border-color: #4d0000;
+}
+
+.btn-danger:hover {
+    background: #2a0000;
+    border-color: var(--red);
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
+}
+
+.btn-warning {
+    color: var(--yellow);
+    border-color: #4d3d00;
+}
+
+.btn-warning:hover {
+    background: #2a2000;
+    border-color: var(--yellow);
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+}
+
+/* INPUTS */
+input, select, textarea {
+    font-family: var(--font-mono);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--blue-dim);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
+}
+
+/* CARDS */
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    transition: border-color 0.2s ease;
+}
+
+.card:hover {
+    border-color: var(--border-active);
+}
+
+/* ESTADO CONTENEDOR */
+.estado { font-size: 0.75rem; padding: 3px 8px; border: 1px solid; display: inline-block; }
+.estado.running  { color: var(--green); border-color: var(--green-dark); background: rgba(0,255,65,0.05); }
+.estado.stopped  { color: var(--red);   border-color: #4d0000;           background: rgba(255,51,51,0.05); }
+.estado.exited   { color: var(--text-secondary); border-color: var(--border); }
+.estado.created  { color: var(--yellow); border-color: #4d3d00;          background: rgba(255,204,0,0.05); }
+
+/* ALERTS */
+.alert {
+    padding: 10px 16px;
+    border-left: 3px solid;
+    font-size: 0.85rem;
+    margin: 10px 0;
+}
+.alert-error   { border-color: var(--red);    background: rgba(255,51,51,0.05);  color: var(--red); }
+.alert-success { border-color: var(--green);  background: rgba(0,255,65,0.05);   color: var(--green); }
+
+/* ANIMACION PARPADEO TERMINAL */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.cursor::after {
+    content: '_';
+    animation: blink 1s infinite;
+    color: var(--blue);
+}
+
+/* LINEA SEPARADORA */
+.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}

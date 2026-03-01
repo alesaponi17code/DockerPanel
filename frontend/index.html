@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DockerPanel // AUTH</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-header {
+            margin-bottom: 40px;
+        }
+
+        .login-header .logo {
+            font-size: 2rem;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 3px;
+        }
+
+        .login-header .logo span {
+            color: var(--text-secondary);
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .tab.active {
+            color: var(--blue);
+            border-bottom-color: var(--blue);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .version {
+            margin-top: 30px;
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .form-panel { display: none; }
+        .form-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="logo">DOCKER<span>PANEL</span></div>
+                <p>> SISTEMA DE DESPLIEGUE AUTOMATIZADO</p>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('login')">LOGIN</div>
+                <div class="tab" onclick="switchTab('registro')">REGISTRO</div>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <!-- LOGIN -->
+            <div id="panel-login" class="form-panel active">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="usuario@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••">
+                </div>
+                <button class="btn btn-full" onclick="login()">INICIAR SESIÓN</button>
+            </div>
+
+            <!-- REGISTRO -->
+            <div id="panel-registro" class="form-panel">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" id="reg-nombre" placeholder="Tu nombre">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="reg-email" placeholder="usuario@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="reg-password" placeholder="••••••••">
+                </div>
+                <button class="btn btn-full" onclick="registro()">CREAR CUENTA</button>
+            </div>
+
+            <p class="version">> DOCKERPANEL v1.0 // MEDAC SEVILLA 2026</p>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

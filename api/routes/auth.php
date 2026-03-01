@@ -9,7 +9,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 //Clave secreta para firmar los tokens
-$secretKey = "dockerpanel_secret_key_2024";
+$secretKey = "dockerpanel_secret_key_2026";
 
 //Metodo HTTP de la petición
 $method = $_SERVER["REQUEST_METHOD"];
