@@ -8,8 +8,9 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
+
 //Clave secreta para firmar los tokens
-$secretKey = "dockerpanel_secret_key_2026";
+$secretKey = "dockerpanel_secret_key_medac_sevilla_2026_tfg_daw";
 
 //Metodo HTTP de la petición
 $method = $_SERVER["REQUEST_METHOD"];
@@ -25,7 +26,7 @@ switch ($method) {
         if ($action === 'login') {
             // LLamamos a la funcion login
             login($data);
-        } elseif ($action === 'register') {
+        } elseif ($action === 'registro') {
             // LLamamos a la funcion register
             registro($data);
         } else {
@@ -109,6 +110,12 @@ function login($data) {
         echo json_encode(['error' => 'Credenciales incorrectas']);
         return;
     }
+
+    error_log("EMAIL BUSCADO: " . $data['email']);
+error_log("USUARIO ENCONTRADO: " . print_r($usuario, true));
+error_log("PASSWORD RECIBIDO: " . $data['password']);
+error_log("HASH EN BBDD: " . ($usuario ? $usuario['password'] : 'NO EXISTE'));
+error_log("VERIFY: " . ($usuario ? (password_verify($data['password'], $usuario['password']) ? 'OK' : 'FALLO') : 'N/A'));
 
     //Creamos el token JWT
     $payload = [

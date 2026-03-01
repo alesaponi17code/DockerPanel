@@ -17,10 +17,12 @@ switch ($method) {
         crearContenedor($usuario);
         break;
     case 'PUT':
+        $id = $GLOBALS['id'];
         $accion = $_GET['accion'] ?? '';
-        accionContenedor($usuario ,$id, $accion);
+        accionContenedor($usuario, $id, $accion);
         break;
     case 'DELETE':
+        $id = $GLOBALS['id'];
         eliminarContenedor($usuario, $id);
         break;
     default:
@@ -40,7 +42,7 @@ function listarContenedores($usuario) {
         $stmt = $conn->prepare('SELECT * FROM contenedores');
         $stmt->execute();
     } else {
-        $stmt = $conn->prepare('SELECT * FROM contenedores WHERE usuario_id = ?');
+        $stmt = $conn->prepare('SELECT * FROM contenedores WHERE id_usuario = ?');
         $stmt->execute([$usuario['id']]);
     }
 
@@ -114,7 +116,7 @@ function accionContenedor($usuario, $id, $accion) {
 
     //Array con las acciones permitidas
     $accionesValidas = ['start', 'stop', 'restart'];
-    if (in_array($accion, $accionesValidas)) {
+    if (!in_array($accion, $accionesValidas)) {
         http_response_code(400);
         echo json_encode(['error' => 'Accion no valida']);
         return;
@@ -149,17 +151,17 @@ function eliminarContenedor($usuario, $id) {
         return;
     }
 
-    //Ejecutamos el comando docker para detener y eliminar
+    // Primero guardamos en logs (antes de eliminar)
+    guardarLog($conn, $id, $usuario['id'], 'delete');
+
+    // Luego ejecutamos el comando docker
     $dockerId = escapeshellarg($contenedor['docker_id']);
     shell_exec("docker stop $dockerId 2>&1");
     shell_exec("docker rm $dockerId 2>&1");
 
-    //Elim inamos el registro de la base de datos
+    // Por último eliminamos de la base de datos
     $stmt = $conn->prepare('DELETE FROM contenedores WHERE id = ?');
     $stmt->execute([$id]);
-
-    //Guardamos en logs
-    guardarLog($conn, $id, $usuario['id'], 'delete');
 
     //Devolvemos mensaje de exito
     echo json_encode(['mensaje' => 'Contenedor eliminado correctamente']);
@@ -168,6 +170,6 @@ function eliminarContenedor($usuario, $id) {
 //----Guardar Log----
 function guardarLog($conn, $idContenedor, $idUsuario, $accion) {
     //Inserta un registro en la tabla logs
-    $stmt = $conn->prepare("INSERT INTO logs (contenedor_id, usuario_id, accion) VALUES (?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO logs (id_contenedor, id_usuario, accion) VALUES (?, ?, ?)");
     $stmt->execute([$idContenedor, $idUsuario, $accion]);
 }

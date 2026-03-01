@@ -7,10 +7,14 @@ let authToken = null;
 //Funcion para guardar el token despues del login
 function setToken(token) {
     authToken = token;
+    sessionStorage.setItem('token', token);
 }
 
 //Funcion para obtener el token
 function getToken() {
+    if (!authToken) {
+        authToken = sessionStorage.getItem('token');
+    }
     return authToken;
 }
 
@@ -22,7 +26,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     };
 
     //Si hay token lo enviamos en la cabecer Authorization
-    if (authToken()) {
+    if (authToken) {
         headers['Authorization'] = `Bearer ${authToken}`;
     }
 

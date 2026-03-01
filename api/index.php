@@ -25,6 +25,9 @@ $resource = $uri[$apiPos + 1] ?? '';
 $id = $uri[$apiPos + 2] ?? null;
 
 
+$GLOBALS['id'] = $id;
+
+
 //Esto segun el nombre de archivo que se encuentre en resource se manda a un sitio u otro
 switch ($resource) {
     case 'auth':

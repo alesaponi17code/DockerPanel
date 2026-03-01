@@ -27,16 +27,16 @@ function listarLogs($usuario) {
     if ($usuario['rol'] === 'admin') {
         $stmt = $conn->prepare('SELECT logs.*, usuarios.nombre as nombre_usuario, contenedores.nombre as nombre_contenedor
         FROM logs
-        JOIN usuarios ON logs.usuario_id = usuarios.id
-        JOIN contenedores ON logs.contenedor_id = contenedores.id
+        JOIN usuarios ON logs.id_usuario = usuarios.id
+        JOIN contenedores ON logs.id_contenedor = contenedores.id
         ORDER BY logs.fecha DESC');
         $stmt->execute();
     } else {
         $stmt = $conn->prepare('SELECT logs.*, usuarios.nombre as nombre_usuario, contenedores.nombre as nombre_contenedor
         FROM logs
-        JOIN usuarios ON logs.usuario_id = usuarios_id
-        JOIN contenedores ON logs.contenedor_id = contenedores.id
-        WHERE logs.usuario_id = ?
+        JOIN usuarios ON logs.id_usuario = usuarios.id
+        JOIN contenedores ON logs.id_contenedor = contenedores.id
+        WHERE logs.id_usuario = ?
         ORDER BY logs.fecha DESC');
         $stmt->execute([$usuario['id']]);
     }

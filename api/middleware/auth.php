@@ -7,7 +7,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 function verificarToken() {
-    $secretKey = "dockerpanel_secret_key_2026"; //Clave secreta para firmar y verificar el token
+    $secretKey = "dockerpanel_secret_key_medac_sevilla_2026_tfg_daw"; //Clave secreta para firmar y verificar el token
     
     $headers = getallheaders(); //Obtiene los headers HTTP enviados en la peticion
     $authHeader = $headers['Authorization'] ?? ''; //Obtiene el header Authorization si existe, sino se queda vacio

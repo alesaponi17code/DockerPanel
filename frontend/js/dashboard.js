@@ -68,7 +68,7 @@ async function cargarContenedores() {
                     </div>
                     <span class="estado ${c.estado}">${c.estado.toUpperCase()}</span>
                 </div>
-                ${c.puerto ? '<div style="font-size:0.75rem; color:var(--text-secondary)">Puerto: ${c.puerto}</div>' : ''}
+                ${c.puerto ? `<div style="font-size:0.75rem; color:var(--text-secondary)">Puerto: ${c.puerto}</div>` : ''}
                 <div class="acciones">
                     <button class="btn" onclick="accion(${c.id}, 'start')">START</button>
                     <button class="btn btn-warning" onclick="accion(${c.id}, 'stop')">STOP</button>
@@ -118,10 +118,10 @@ async function crearContenedor() {
 async function accion(id, accion) {
     try {
         //Llamamos a la funcion apiRequest
-        await apiRequest('contenedores/${id}?accion=${accion}`,', 'POST');
+        await apiRequest(`contenedores/${id}?accion=${accion}`, 'PUT');
         await cargarContenedores();
     } catch (error) {
-        console.error('Error ejecutando ${accion}:', error);
+        console.error(`Error ejecutando ${accion}:`, error);
     }
 }
 
@@ -133,7 +133,7 @@ async function eliminar(id) {
 
     try {
         //Llamamos a la funcion apiRequest
-        await apiRequest('contenedores/${id}', 'DELETE');
+        await apiRequest(`contenedores/${id}`, 'DELETE');
         await cargarContenedores();
     } catch (error) {
         console.error('Error eliminando contenedor:', error);
@@ -192,11 +192,11 @@ async function cargarLogs() {
     try {
         //Llamamos a la funcion apirquiest
         const logs = await apiRequest('logs', 'GET');
-        const grid = document.getElementById('logs-tbody');
+        const tbody = document.getElementById('logs-tbody');
 
         //Si no hay, mostraremos un mensaje
         if (logs.length === 0) {
-            grid.innerHTML = '<tr><td colspan="4" class="empty-state">NO HAY LOGS DISPONIBLES</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="empty-state">NO HAY LOGS DISPONIBLES</td></tr>';
             return;
         }
 
@@ -216,7 +216,7 @@ async function cargarLogs() {
 //----VENTANA MODAL
 
 function abrirModal() {
-    document.getElementById('modal').classList.add('active');
+    document.getElementById('modal-overlay').classList.add('active');
 }
 
 function cerrarModal() {
