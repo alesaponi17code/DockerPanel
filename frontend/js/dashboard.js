@@ -37,6 +37,7 @@ function mostrarPagina(pagina) {
     if (pagina === 'contenedores') cargarContenedores();
     if (pagina === 'plantillas') cargarPlantillas();
     if (pagina === 'logs') cargarLogs();
+    if (pagina === 'metricas') cargarContenedoresSelect();
 
 }
 
@@ -236,4 +237,166 @@ function logout() {
     //Borramos los datos de sesion y mandamos a la pantalal del login
     sessionStorage.clear();
     window.location.href = 'index.html';
+}
+
+
+//---METRICAS--
+
+let chartCpu = null;
+let chartRam = null;
+let intervaloMetricas = null;
+let contenedorSeleccionado = null;
+
+//Maximo de puntos en la gráfica
+const MAX_PUNTOS = 20;
+
+//Funcion
+async function cargarContenedoresSelect() {
+    try {
+        //Llamamos a la funcion apiRequest
+        const contenedores = await apiRequest('contenedores', 'GET');
+        const select = document.getElementById('select-contenedor');
+
+        //Limpiamos las opciones anteriores menos la primera
+        select.innerHTML = '<option value="">-- Seleccione un contenedor --</option>';
+
+        //Solo mostramos los contenedores que esten en running
+        contenedores
+            .filter(c => c.estado === 'running')
+            .forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.nombre} (${c.imagen})</option>`;
+            });
+    } catch (error) {
+        console.error('Error cargando contenedores para métricas:', error);
+    }
+
+}
+
+function iniciarMonitorizacion() {
+    //Obtenemos el id del contenedor seleccionado
+    const id = document.getElementById('select-contenedor').value;
+
+    //Si habia un intervalo anterior lo limpiamos
+    if (intervaloMetricas) {
+        clearInterval(intervaloMetricas);
+        intervaloMetricas = null;
+    }
+
+    //Si no hay contenedor lo ocultamos
+    if (!id) {
+        document.getElementById('metricas-container').style.display = 'none';
+        document.getElementById('metricas-empty').style.display = 'block';
+    
+        return;
+    }
+    
+
+    contenedorSeleccionado = id;
+
+    document.getElementById('metricas-container').style.display = 'block';
+    document.getElementById('metricas-empty').style.display = 'none';
+
+
+    //Inicializamos las gráficas
+    inicializarGraficas();
+
+    //Ejecutamos inmedietamente y cada 3 segundoas
+    obtenerMetricas();
+    intervaloMetricas = setInterval(obtenerMetricas, 3000);
+}
+
+
+function inicializarGraficas() {
+    //Destruimos las graficas anteriores en el caso de que existan
+    if (chartCpu) { chartCpu.destroy(); chartCpu = null; }
+    if (chartRam) { chartRam.destroy(); chartRam = null; }
+
+    const opcionesBase = {
+        responsive: true,
+        animation: { duration: 300 },
+        scales: {
+            x: {
+                ticks: { color: '#6a9e6a', font: { family: 'Share Tech Mono', size: 10 } },
+                grid: { color: '#1a2e1a' }
+            },
+            y: {
+                ticks: { color: '#6a9e6a', font: { family: 'Share Tech Mono', size: 10 } },
+                grid: { color: '#1a2e1a' },
+                beginAtZero: true
+            }
+        },
+        plugins: { legend: { display: false } }
+    };
+
+    // Gráfica CPU
+    chartCpu = new Chart(document.getElementById('chart-cpu'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                borderColor: '#00ff41',
+                backgroundColor: 'rgba(0, 255, 65, 0.05)',
+                borderWidth: 2,
+                pointRadius: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: { ...opcionesBase, scales: { ...opcionesBase.scales, y: { ...opcionesBase.scales.y, max: 100 } } }
+    });
+
+    // Gráfica RAM
+    chartRam = new Chart(document.getElementById('chart-ram'), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                borderColor: '#ffcc00',
+                backgroundColor: 'rgba(255, 204, 0, 0.05)',
+                borderWidth: 2,
+                pointRadius: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: opcionesBase
+    });
+}
+
+async function obtenerMetricas() {
+    try {
+        //Llamamos a la funcion apiRequest
+        const data = await apiRequest(`metricas/${contenedorSeleccionado}`, 'POST');
+
+        //Actualizamos las valores numericos
+        document.getElementById('metric-cpu').textContent = data.cpu.toFixed(2) + '%';
+        document.getElementById('metric-ram').textContent = data.ram.toFixed(2) + ' MB';
+        document.getElementById('metric-red').textContent = data.red.toFixed(2) + ' KB';
+
+        //Añadimos el punto de las graficas
+        const horaActual = new Date().toLocaleTimeString('es-ES');
+
+        agregarPunto(chartCpu, horaActual, data.cpu);
+        agregarPunto(chartRam, horaActual, data.ram);
+
+    } catch (error) {
+        console.error('Error obteniendo métricas:', error);
+        clearInterval(intervaloMetricas);
+    
+    }
+}
+
+function agregarPunto(chart, label, value) {
+    chart.data.labels.push(label);
+    chart.data.datasets[0].data.push(value);
+
+    //Si hay mas puntos del maximo elimina,mos el primero
+    if (chart.data.labels.length > MAX_PUNTOS) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+    }
+
+    chart.update();
 }

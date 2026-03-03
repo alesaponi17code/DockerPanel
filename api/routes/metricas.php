@@ -7,9 +7,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
+        $id = $GLOBALS['id'];
         obtenerMetricas($usuario, $id);
         break;
     case 'POST':
+        $id = $GLOBALS['id'];
+        error_log("ID METRICAS: " . var_export($id, true));
         guardarMetricas($usuario, $id);
         break;
     default:
@@ -89,10 +92,6 @@ function guardarMetricas($usuario, $id) {
     //Guardamos las metricas en la base de datos
     $stmt = $conn->prepare('INSERT INTO metricas (id_contenedor, cpu, ram, red) VALUES (?, ?, ?, ?)');
     $stmt->execute([$id, $cpu, $ram, $red]);
-
-    //Devolvemos mensaje de exito
-    http_response_code(201);
-    echo json_encode(['mensaje' => 'Metricas guardadas correctamente']);
 
     //Devolvemos los bvalores guardados
     echo json_encode(['cpu' => $cpu, 'ram' => $ram, 'red' => $red]);
